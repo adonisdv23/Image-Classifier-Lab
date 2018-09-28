@@ -1,54 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # */AIPND/intropylab-classifying-images/check_images.py
-#                                                                             
-# TODO: 0. Fill in your information in the programming header below
-# PROGRAMMER: Adonis Vasquez
-# DATE CREATED: August 31, 2018
-# REVISED DATE:             <=(Date Revised - if any)
-# REVISED DATE: 05/14/2018 - added import statement that imports the print 
-#                           functions that can be used to check the lab
-# PURPOSE: Check images & report results: read them in, predict their
-#          content (classifier), compare prediction to actual value labels
-#          and output results
 #
-# Use argparse Expected Call with <> indicating expected user input:
-#      python check_images.py --dir <directory with images> --arch <model>
-#             --dogfile <file that contains dognames>
-#   Example call:
-#    python check_images.py --dir pet_images/ --arch vgg --dogfile dognames.txt
-##
 
-# Imports python modules
-
+import os
 from os import listdir
-
-# Imports classifier function for using CNN to classify images 
-from classifier import classifier 
-
-# Imports print functions that check the lab
-from print_functions_for_lab_checks import *
-
-# Imports time() and sleep() functions from time module
-from time import time, sleep
-
-# Import argparse python module
+from time import time
 import argparse
 
-# Importas only listdir functino from OS module
-from os import listdir
 
-# Imports classifier function for using pretrained CNN to classify images
-from classifier import classifier
-
-# Main program function defined below
-#wait = input("enter")
 def main():
-    # TODO: 1. Define start_time to measure total program runtime by
+
     # Set start time
     start_time = time()
-
-    #sleep(22)
 
     # Sets end time
     end_time = time()
@@ -65,136 +29,134 @@ def main():
     # Computes overall runtime in seconds
     seconds = int(((tot_time % 3600) % 60))
 
-    #print('\nTotal Elapsed Runtime:', tot_time, "in seconds"
-
     # Prints overall runtime in format hh:mm:ss
-    print('\nTotal Elapsed Runtime:', str(int((tot_time/3600))+":"+int(((tot_time / 3600)/60))
-    )+":"+int(((tot_time % 3600) % 60)))
+    print('\nTotal Elapsed Runtime:', str(int((tot_time/3600))) + ":" + str(int(((tot_time / 3600)/60))) +
+          ":" + str(int(((tot_time % 3600) % 60))))
 
-    # TODO: 2. Define get_input_args() function to create & retrieve command
-    # line arguments
 
-dir     = '/Users/adonisvasquez/PycharmProjects/werk/pet_images/'
-model   = 'vgg'
-dogfile = "dognames.txt"
+placeholder_dir = 'fuck this shit'
+placeholder_model = 'fuck that shit'
+placeholder_pet_name_file = 'fuck all this code'
 
-def get_input_args(dir, model, dognames):
 
-    # Creates parse
-    parser = argparse.ArgumentParser()
+def get_input_args(get_input_dir, get_input_model, get_input_pet_name_file):
 
-    #Argument 1: that's a path to a folder
-    parser.add_argument('--dir', type = str, default = '/Users/adonisvasquez/PycharmProjects/werk/pet_images/',
-                        help = 'Path to folder')
-    parser.add_argument('--arch', type=str, default='vgg',
-                        help='chosen model')
-    parser.add_argument('--dogfile', type=str, default='dognames.txt',
-                        help='text file that has dognames')
+    # Stores inputs into shorter text
+    gia_ins = [get_input_dir, get_input_model, get_input_pet_name_file]
 
-    get_input_args.dir = dir
-    #print(get_input_args.dir)
-    # returns parsed argument collection
-    print("a")
-    print(get_input_args.dir)
-    print("a")
+    # Creates parse processes function inputs
+    gia_parser = argparse.ArgumentParser()
 
-#wait = input("enter")
-# Assigns variable in_args to parse_args()
-in_args = get_input_args(dir, model, dogfile)
-print(in_args)
+    # Adds arguments to parser
+    # Necessary to parse args so python will recognize them as strings, other wise function inputs will be type<bytes>
+    gia_parser.add_argument('--dir', type=str, default='/Users/adonisvasquez/PycharmProjects/werk/pet_images/',
+                            help='Path to folder')
+    gia_parser.add_argument('--arch', type=str, default='vgg',
+                            help='chosen model')
+    gia_parser.add_argument('--petfile', type=str, default='dognames.txt',
+                            help='text file that has dognames')
 
-        # TODO: 3. Define get_pet_labels() function to create pet image labels by
-    # creating a dictionary with key=filename and value=file label to be used
-    # to check the accuracy of the classifier function
+    # Parses arguments with function inputs
+    gia_parse_the_args = gia_parser.parse_args(['--dir', gia_ins[0], '--arch', gia_ins[1], '--petfile', gia_ins[2]])
+    # Gets the values from argument parse in the form of a dictionary
+    gia_parse_args_dic = vars(gia_parse_the_args)
+    # Creates a vector of strings for for dictionary values (argument entries)
+    gia_parse_args_data = tuple(gia_parse_args_dic.values())
 
-#wait = input("enter")
-#def get_pet_labels(pet_images):
-def get_pet_labels():
-#pet_images, pet_name
+    # Creates variables to pass through function
+    gia_parse_args_dir = gia_parse_args_data[0]
+    gia_parse_args_arch = gia_parse_args_data[1]
+    gia_parse_args_pet_file = gia_parse_args_data[2]
 
-    # Retrieve the filenames from folder pet_images/
-    filename_list = listdir('/Users/adonisvasquez/PycharmProjects/werk/pet_images')
-    get_pet_labels.filename_list = filename_list
-    filename_list = tuple(filename_list)
+    # Function will output three variables
+    return gia_parse_args_dir, gia_parse_args_arch, gia_parse_args_pet_file
 
-    print(get_pet_labels.filename_list)
-    filedata = open('/Users/adonisvasquez/PycharmProjects/werk/dognames.txt', 'r')
-    pet_name_list = filedata.read().splitlines()
-    filedata.close()
-    pet_name_list = tuple(pet_name_list)
 
-    # Print 10 of the filenames from folder pet_images/
-    #print("\nPrints 10 filenames from folder pet_images/")
-    #for idx in range(0, 10, 1):
-    #    print("%2d file: %-25s" % (idx + 1, filename_list[idx]))
+# Runs function and assigns three variables to the three outputs (returns) of get_input_args
+used_dir, used_arch, used_dog_name_file = get_input_args(placeholder_dir, placeholder_model, placeholder_pet_name_file)
+print('Outputs of get_input_args :' "\n", used_dir, "\n", used_arch, "\n", used_dog_name_file)
 
-    # Creates empty dictionary named pet_dic
-    #pet_dic = dict()
-    #pet_dic = {}
 
-    # determines number of items in dictionary
-    ##items_in_dic = len(pet_dic)
-    ##print("\nEmpty Dictionary pet_dic - n items=", items_in_dic)
+def get_pet_labels(get_pet_labels_dir, get_pet_labels_pet_file):
+
+    gpl_ins =[get_pet_labels_dir, get_pet_labels_pet_file]
+
+    gpl_parser = argparse.ArgumentParser()
+    gpl_parser.add_argument('--dir', type=str, default='/Users/adonisvasquez/PycharmProjects/werk/pet_images/',
+                            help='Path to folder')
+    gpl_parser.add_argument('--petfile', type=str, default='dognames.txt',
+                            help='text file that has dognames')
+
+    # Parses arguments with function inputs
+    gpl_parse_the_args = gpl_parser.parse_args(['--dir', gpl_ins[0], '--petfile', gpl_ins[1]])
+    # Gets the values from argument parse in the form of a dictionary
+    gpl_parse_args_dic = vars(gpl_parse_the_args)
+    # Creates a vector of strings for for dictionary values (argument entries)
+    gpl_parse_args_data = tuple(gpl_parse_args_dic.values())
+
+    # Creates variables to pass through function
+    gpl_parse_args_dir = gpl_parse_args_data[0]
+    gpl_parse_args_pet_file = gpl_parse_args_data[1]
+
+    # Retrieves file names from folder pet_images | tuple makes filename_list hashable (usable in for loops)
+    filename_list = tuple(listdir(gpl_parse_args_dir))
+
+    # Joins the strings into a usable format (#justwindowsthings)
+    pet_names_initial = open(os.path.join(gpl_parse_args_dir, gpl_parse_args_pet_file), 'r')
+    # Reads text file and separates long string by new lines
+    pet_name_list = tuple(pet_names_initial.read().splitlines())
+    # Closes the file to preserve memory
+    pet_names_initial.close()
 
     # Adds new key-value pairs to dictionary ONLY when key doesn't already exist
-    keys = filename_list
-    values = pet_name_list
-    #print(keys[0])
-    #print(values[0])
+    pet_dic_keys = filename_list
+    pet_dic_values = pet_name_list
+
+    # Pairs file names to pet names in a dictionary
     pet_dic = dict()
-    for idx in range(0, len(keys), 1):
-        if keys[idx] not in pet_dic:
-            pet_dic[keys[idx]] = values[idx]
+    for i in range(0, len(pet_dic_keys), 1):
+        if pet_dic_keys[i] not in pet_dic:
+            pet_dic[pet_dic_keys[i]] = pet_dic_values[i]
         else:
-            print("** Warning: Key=", keys[idx],
-                "already exists in pet_dic with value =", pet_dic[keys[idx]])
+            print("** Warning: Key=", pet_dic_keys[i],
+                  "already exists in pet_dic with value =", pet_dic[pet_dic_keys[i]])
 
-    # Iterating through a dictionary printing all keys & their associated values NOT DOING
-    # print("\nPrinting all key-value pairs in dictionary pet_dic:")
-    # for key in pet_dic:
-    #     print("Key=", key, "   Value=", pet_dic[key])
-    get_pet_labels.pet_dic = pet_dic
-
-    #print("\nnewline")
-    #print(pet_dic['cat_07.jpg'])
-    #answers_dic = get_pet_labels(in_args.dir)
-    #answers_dic = get_pet_labels()
-    #return answers_dic
-
-get_pet_labels()
-answers_dic = get_pet_labels.pet_dic
-#print(answers_dic)
+    return pet_dic
 
 
-directory = str(get_input_args.dir)
-filename_list = get_pet_labels.filename_list
-test_image = filename_list
-print(filename_list[1])
-for i in range(len(filename_list)):
+# Runs get_pet_labels with outputs of get_input_args
+answers_dic = get_pet_labels(used_dir, used_dog_name_file)
 
-    # get image file directory (point at each image)
-    test_image[i] = [directory, filename_list[i]]
+# TODO: 4. Define classify_images() function to create the classifier
+# labels with the classifier function using in_arg.arch, comparing the
+# labels, and creating a dictionary of results (result_dic)
 
-print(test_image[1])
-print("a")
-    # TODO: 4. Define classify_images() function to create the classifier
-    # labels with the classifier function uisng in_arg.arch, comparing the
-    # labels, and creating a dictionary of results (result_dic)
-    #def classify_images():
-#directory1 = in_args.dir()
-#print(get_input_args.dir())
 
-def classifying_images():
+def classifying_images(classifying_images_dir, pet_dic_to_compare):
 
-    directory2 = in_args.dir()
-    print(directory2)
-    for i in range(len(get_pet_labels.filename_list)):
+    ci_ins = [classifying_images_dir, pet_dic_to_compare]
+
+    ci_parser = argparse.ArgumentParser()
+    ci_parser.add_argument('--dir', type=str, default='/Users/adonisvasquez/PycharmProjects/werk/pet_images/',
+                           help='Path to folder')
+
+    ci_parser.add_argument('--dict', type=dict, default={"nokey": "novalue"},
+                           help='Dictionary of labeled pet images')
+
+    # Parses arguments with function inputs
+    ci_parse_dir = ci_parser.parse_args('--dir', ci_ins[0])
+    ci_parse_dict = vars(ci_parser.parse_args('--dict', ci_ins[1]))
+    print(ci_parse_dict)
+    # Gets directory from argument parse in the form of a string
+    ci_parse_args_dir = tuple(vars(ci_parse_dir).values())
+
+    ci_filename_list = tuple(listdir(ci_parse_args_dir))
+
+    for i in range(len(ci_filename_list)):
 
         #get image file directory (point at each image)
-        test_image[i] = [directory , get_pet_labels.filename_list[i]]
+        test_image[i] = os.path.join(get_pet_labels_dir, get_pet_labels_pet_file)
 
-    print(test_image)
-    print("a")
         #get pet image label
 
         #plug file directory into Model and record output (classiferlabel)
