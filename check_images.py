@@ -34,9 +34,10 @@ def main():
           ":" + str(int(((tot_time % 3600) % 60))))
 
 
-placeholder_dir = 'fuck this shit'
-placeholder_model = 'fuck that shit'
-placeholder_pet_name_file = 'fuck all this code'
+placeholder_dir = r'C:\Users\hchan\PycharmProjects\Image-Classifier-Lab'
+placeholder_model = 'vgg'
+placeholder_pet_name_file = 'dognames.txt'
+pet_images_folder_name = 'pet_images'
 
 
 def get_input_args(get_input_dir, get_input_model, get_input_pet_name_file):
@@ -49,7 +50,7 @@ def get_input_args(get_input_dir, get_input_model, get_input_pet_name_file):
 
     # Adds arguments to parser
     # Necessary to parse args so python will recognize them as strings, other wise function inputs will be type<bytes>
-    gia_parser.add_argument('--dir', type=str, default='/Users/adonisvasquez/PycharmProjects/werk/pet_images/',
+    gia_parser.add_argument('--dir', type=str, default='/Users/adonisvasquez/PycharmProjects/werk',
                             help='Path to folder')
     gia_parser.add_argument('--arch', type=str, default='vgg',
                             help='chosen model')
@@ -79,10 +80,10 @@ print('Outputs of get_input_args :' "\n", used_dir, "\n", used_arch, "\n", used_
 
 def get_pet_labels(get_pet_labels_dir, get_pet_labels_pet_file):
 
-    gpl_ins =[get_pet_labels_dir, get_pet_labels_pet_file]
+    gpl_ins = [get_pet_labels_dir, get_pet_labels_pet_file]
 
     gpl_parser = argparse.ArgumentParser()
-    gpl_parser.add_argument('--dir', type=str, default='/Users/adonisvasquez/PycharmProjects/werk/pet_images/',
+    gpl_parser.add_argument('--dir', type=str, default='/Users/adonisvasquez/PycharmProjects/werk',
                             help='Path to folder')
     gpl_parser.add_argument('--petfile', type=str, default='dognames.txt',
                             help='text file that has dognames')
@@ -99,8 +100,7 @@ def get_pet_labels(get_pet_labels_dir, get_pet_labels_pet_file):
     gpl_parse_args_pet_file = gpl_parse_args_data[1]
 
     # Retrieves file names from folder pet_images | tuple makes filename_list hashable (usable in for loops)
-    filename_list = tuple(listdir(gpl_parse_args_dir))
-
+    filename_list = tuple(listdir(os.path.join(gpl_parse_args_dir, pet_images_folder_name)))
     # Joins the strings into a usable format (#justwindowsthings)
     pet_names_initial = open(os.path.join(gpl_parse_args_dir, gpl_parse_args_pet_file), 'r')
     # Reads text file and separates long string by new lines
@@ -135,36 +135,41 @@ answers_dic = get_pet_labels(used_dir, used_dog_name_file)
 def classifying_images(classifying_images_dir, pet_dic_to_compare):
 
     ci_ins = [classifying_images_dir, pet_dic_to_compare]
+    test_image_paths = list()
 
     ci_parser = argparse.ArgumentParser()
-    ci_parser.add_argument('--dir', type=str, default='/Users/adonisvasquez/PycharmProjects/werk/pet_images/',
+    ci_parser.add_argument('--dir', type=str, default='/Users/adonisvasquez/PycharmProjects/werk',
                            help='Path to folder')
 
-    ci_parser.add_argument('--dict', type=dict, default={"nokey": "novalue"},
-                           help='Dictionary of labeled pet images')
-
     # Parses arguments with function inputs
-    ci_parse_dir = ci_parser.parse_args('--dir', ci_ins[0])
-    ci_parse_dict = vars(ci_parser.parse_args('--dict', ci_ins[1]))
-    print(ci_parse_dict)
-    # Gets directory from argument parse in the form of a string
+    ci_parse_dir = ci_parser.parse_args(['--dir', ci_ins[0]])
+    ci_parse_dict = ci_ins[1]
+
+    # Gets project directory from argument parse in the form of a tuple
     ci_parse_args_dir = tuple(vars(ci_parse_dir).values())
+    # Converts tuple entry into string, I don't know why
+    ci_parse_args_dir = ci_parse_args_dir[0]
+    # Creates list of pet image file names
+    ci_filename_list = tuple(listdir(os.path.join(ci_parse_args_dir, pet_images_folder_name)))
 
-    ci_filename_list = tuple(listdir(ci_parse_args_dir))
-
+    # Creates a list of paths to images
     for i in range(len(ci_filename_list)):
 
-        #get image file directory (point at each image)
-        test_image[i] = os.path.join(get_pet_labels_dir, get_pet_labels_pet_file)
+        # Get i-th image file path (point at each image)
+        test_image_paths.append(os.path.join(
+            os.path.join(ci_parse_args_dir, pet_images_folder_name), ci_filename_list[i]))
 
-        #get pet image label
+    # Creates matching list of labels for each file
+    for i in range(len(ci_filename_list)):
 
-        #plug file directory into Model and record output (classiferlabel)
+        
 
-        #compare labels
+    #get pet image label
 
-    # Defines a dog test image from pet_images folder
-    test_image = in_arg.dir
+    #plug file directory into Model and record output (classiferlabel)
+
+    #compare labels
+
     #
     # # Defines a model architecture to be used for classification
     # # NOTE: this function only works for model architectures:
@@ -177,6 +182,7 @@ def classifying_images(classifying_images_dir, pet_dic_to_compare):
     # label has more than one word that can describe it.
     image_classification = classifier(test_image, model)
 
+classifying_images(used_dir, answers_dic)
 
 #result_dic = classify_images(in_arg.dir, answers_dic, in_arg.arch)
 
