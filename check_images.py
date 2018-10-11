@@ -7,7 +7,7 @@ import os
 from os import listdir
 from time import time
 import argparse
-
+import classifier
 
 def main():
 
@@ -120,7 +120,6 @@ def get_pet_labels(get_pet_labels_dir, get_pet_labels_pet_file):
         else:
             print("** Warning: Key=", pet_dic_keys[i],
                   "already exists in pet_dic with value =", pet_dic[pet_dic_keys[i]])
-
     return pet_dic
 
 
@@ -132,23 +131,29 @@ answers_dic = get_pet_labels(used_dir, used_dog_name_file)
 # labels, and creating a dictionary of results (result_dic)
 
 
-def classifying_images(classifying_images_dir, pet_dic_to_compare):
+def classifying_images(classifying_images_dir, pet_dic_to_compare, classifier_model):
 
-    ci_ins = [classifying_images_dir, pet_dic_to_compare]
+    ci_ins = [classifying_images_dir, pet_dic_to_compare, classifier_model]
+    # Initiates variables
     test_image_paths = list()
+    filename_labels = list()
+    classifier_labels = list()
 
     ci_parser = argparse.ArgumentParser()
     ci_parser.add_argument('--dir', type=str, default='/Users/adonisvasquez/PycharmProjects/werk',
                            help='Path to folder')
+    ci_parser.add_argument('--arch', type=str, default='vgg',
+                            help='chosen model')
 
     # Parses arguments with function inputs
-    ci_parse_dir = ci_parser.parse_args(['--dir', ci_ins[0]])
+    ci_parse_dir = ci_parser.parse_args(['--dir', ci_ins[0], '--arch', ci_ins[2]])
     ci_parse_dict = ci_ins[1]
 
     # Gets project directory from argument parse in the form of a tuple
     ci_parse_args_dir = tuple(vars(ci_parse_dir).values())
     # Converts tuple entry into string, I don't know why
     ci_parse_args_dir = ci_parse_args_dir[0]
+    ci_parse_args_model = ci_parse_args_dir[2]
     # Creates list of pet image file names
     ci_filename_list = tuple(listdir(os.path.join(ci_parse_args_dir, pet_images_folder_name)))
 
@@ -162,31 +167,14 @@ def classifying_images(classifying_images_dir, pet_dic_to_compare):
     # Creates matching list of labels for each file
     for i in range(len(ci_filename_list)):
 
-        
+        # Creates matching a list with labels to filename directory at each index
+        filename_labels.append(ci_parse_dict[ci_filename_list[i]])
 
-    #get pet image label
+    # Inputs files into Classifier function and records labels
+    for i in range(len(test_image_paths)):
 
-    #plug file directory into Model and record output (classiferlabel)
+        # Plugs in directory and model into classifier function
+        classifier_labels.append(classifier(ci_parse_args_dir, ci_parse_args_model))
 
-    #compare labels
 
-    #
-    # # Defines a model architecture to be used for classification
-    # # NOTE: this function only works for model architectures:
-    #      'vgg', 'alexnet', 'resnet'
-    model = "vgg"
-
-    # Demonstrates classifier() functions usage
-    # NOTE: image_classication is a text string - It contains mixed case(both lower
-    # and upper case letter) image labels that can be separated by commas when a
-    # label has more than one word that can describe it.
-    image_classification = classifier(test_image, model)
-
-classifying_images(used_dir, answers_dic)
-
-#result_dic = classify_images(in_arg.dir, answers_dic, in_arg.arch)
-
-#print("194" + in_args.dir)
-#print("195" + answers_dic)
-#print("196" + in_args.arch)
-
+    # To Do - figure out what outputs are necessary and what does classifier.py output
